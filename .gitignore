@@ -59,6 +59,7 @@ demos/minimind/latex_build/
 *.fdb_latexmk
 *.synctex.gz
 demos/minimind/pdf/MiniMind_全集_图文讲义.pdf
+demos/minimind/pdf/MiniMind_全26集_图文讲义.pdf
 demos/minimind/pdf/p02_*.pdf
 demos/minimind/pdf/p03_*.pdf
 demos/minimind/pdf/p05_*.pdf
