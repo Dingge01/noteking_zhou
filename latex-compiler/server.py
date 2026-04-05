@@ -84,8 +84,7 @@ def fix_html_img_tags(tex: str) -> str:
 
 
 def remove_invalid_figure_captions(tex: str) -> str:
-    """移除孤立的 \caption 命令（不在 figure 环境内的）和其他可能导致编译失败的问题。"""
-    # 修复 \caption 不在 figure 环境内的问题（有时 LLM 会在 figure 外放 \caption）
+    """移除孤立的 \\caption 命令（不在 figure 环境内的）。"""
     lines = tex.split('\n')
     in_figure = False
     result = []
@@ -94,11 +93,34 @@ def remove_invalid_figure_captions(tex: str) -> str:
             in_figure = True
         if '\\end{figure}' in line:
             in_figure = False
-        # 如果 \caption 不在 figure 环境内，跳过这行
         if '\\caption{' in line and not in_figure:
             continue
         result.append(line)
     return '\n'.join(result)
+
+
+def remove_missing_image_figures(tex: str, available_files: set) -> str:
+    """把引用了不存在图片的整个 figure 环境删掉，防止编译报 Unable to load picture。"""
+    # 匹配完整的 figure 环境（含 H/h/t/b 等位置参数）
+    figure_pattern = re.compile(
+        r'\\begin\{figure\}.*?\\end\{figure\}',
+        re.DOTALL
+    )
+
+    def keep_figure(m: re.Match) -> str:
+        block = m.group(0)
+        # 找出 block 里所有 \includegraphics{...} 或 \includegraphics[...]{...}
+        imgs = re.findall(r'\\includegraphics(?:\[.*?\])?\{([^}]+)\}', block)
+        if not imgs:
+            return block  # 没有图片引用，保留
+        # 只要有一张图不在 available_files 里就整块删掉
+        for img in imgs:
+            img_name = Path(img).name
+            if img_name not in available_files and img not in available_files:
+                return ''  # 删掉整个 figure
+        return block
+
+    return figure_pattern.sub(keep_figure, tex)
 
 
 @app.route("/compile", methods=["POST"])
@@ -114,7 +136,7 @@ def compile_latex():
     if '\\begin{document}' not in tex_content:
         return jsonify({"error": "LaTeX 内容无效：缺少 \\begin{document}"}), 422
 
-    # 修复 LLM 可能生成的错误内容
+    # 第一步：修复 LLM 可能生成的 HTML img 标签
     tex_content = fix_html_img_tags(tex_content)
     tex_content = remove_invalid_figure_captions(tex_content)
     tex_content = inject_branding(tex_content)
@@ -122,16 +144,19 @@ def compile_latex():
         tex_content = ensure_graphicx(tex_content)
 
     with tempfile.TemporaryDirectory(prefix="latex_") as tmpdir:
-        # 把帧图片写入编译目录
-        written_frames = []
+        # 把帧图片写入编译目录，记录实际写入的文件名
+        written_frames: set = set()
         for fname, b64data in frames_b64.items():
             try:
                 img_bytes = base64.b64decode(b64data)
                 img_path = Path(tmpdir) / fname
                 img_path.write_bytes(img_bytes)
-                written_frames.append(fname)
+                written_frames.add(fname)
             except Exception:
                 pass
+
+        # 第二步：删掉引用了不存在图片的 figure 环境（必须在写入图片后才知道哪些存在）
+        tex_content = remove_missing_image_figures(tex_content, written_frames)
 
         tex_path = Path(tmpdir) / "notes.tex"
         tex_path.write_text(tex_content, encoding="utf-8")
