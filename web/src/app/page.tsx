@@ -92,7 +92,8 @@ export default function Home() {
   const [streamContent, setStreamContent] = useState("");
   const [streamStage, setStreamStage] = useState("");
   const [streamTitle, setStreamTitle] = useState("");
-  const [remaining, setRemaining] = useState<number | null>(null);
+  // Rate limit disabled
+  // const [remaining, setRemaining] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [copied, setCopied] = useState(false);
@@ -125,19 +126,21 @@ export default function Home() {
         signal: abortRef.current.signal,
       });
 
-      if (resp.status === 429) {
-        const errData = await resp.json().catch(() => ({}));
-        setRemaining(0);
-        throw new Error(errData.detail || "今日免费次数已用完（20次/天），明天再来吧~");
-      }
+      // Rate limit disabled: no 429 handling needed
+      // if (resp.status === 429) {
+      //   const errData = await resp.json().catch(() => ({}));
+      //   setRemaining(0);
+      //   throw new Error(errData.detail || "今日免费次数已用完（20次/天），明天再来吧~");
+      // }
 
       if (!resp.ok) {
         const errData = await resp.json().catch(() => ({}));
         throw new Error(errData.detail || `HTTP ${resp.status}`);
       }
 
-      const limitHeader = resp.headers.get("X-RateLimit-Remaining");
-      if (limitHeader !== null) setRemaining(parseInt(limitHeader, 10));
+      // Rate limit disabled: no header parsing
+      // const limitHeader = resp.headers.get("X-RateLimit-Remaining");
+      // if (limitHeader !== null) setRemaining(parseInt(limitHeader, 10));
 
       const reader = resp.body?.getReader();
       if (!reader) throw new Error("No response body");
@@ -368,11 +371,13 @@ export default function Home() {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              {/* Rate limit display disabled
               {remaining !== null && (
                 <span className="text-xs text-[var(--text-secondary)] px-2 py-1 rounded border border-[var(--border)]">
                   今日剩余 {remaining} 次
                 </span>
               )}
+            */}
               <button
                 onClick={() => { setShowHistory(!showHistory); setResult(null); }}
                 className="px-3 py-1.5 rounded-lg border border-[var(--border)] hover:bg-[var(--bg-primary)] transition text-sm"
@@ -424,11 +429,10 @@ export default function Home() {
                 <button
                   key={t.name}
                   onClick={() => setTemplate(t.name)}
-                  className={`px-3 py-1.5 rounded-lg text-sm transition ${
-                    template === t.name
+                  className={`px-3 py-1.5 rounded-lg text-sm transition ${template === t.name
                       ? "bg-[var(--accent)] text-white"
                       : "bg-[var(--bg-primary)] border border-[var(--border)] hover:border-[var(--accent)]"
-                  }`}
+                    }`}
                 >
                   {t.icon} {t.label}
                 </button>
@@ -571,12 +575,12 @@ export default function Home() {
           <div className="max-w-6xl mx-auto px-4 py-6">
             <div className="flex flex-col md:flex-row items-center justify-between gap-4">
               <div className="text-sm text-[var(--text-secondary)]">
-                NoteKing 笔记之王 - 开源视频学习笔记工具 | 每日免费 20 次
+                NoteKing 笔记之王 - 开源视频学习笔记工具
               </div>
               <div className="flex items-center gap-4 text-sm">
                 <a href="https://github.com/bcefghj/noteking" target="_blank"
                   className="text-[var(--accent)] hover:underline flex items-center gap-1">
-                  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                  <svg className="w-4 h-4" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z" /></svg>
                   GitHub
                 </a>
                 <a href="https://www.xiaohongshu.com/user/profile/bcefghj" target="_blank"
