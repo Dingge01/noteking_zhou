@@ -20,9 +20,10 @@ const TEMPLATES = [
 ];
 
 const API_BASE =
-  typeof window !== "undefined"
+  process.env.NEXT_PUBLIC_API_URL ||
+  (typeof window !== "undefined"
     ? `${window.location.protocol}//${window.location.hostname}:8000`
-    : "http://api:8000";
+    : "http://api:8000");
 
 const HISTORY_KEY = "noteking_history";
 const MAX_HISTORY = 50;
@@ -430,8 +431,8 @@ export default function Home() {
                   key={t.name}
                   onClick={() => setTemplate(t.name)}
                   className={`px-3 py-1.5 rounded-lg text-sm transition ${template === t.name
-                      ? "bg-[var(--accent)] text-white"
-                      : "bg-[var(--bg-primary)] border border-[var(--border)] hover:border-[var(--accent)]"
+                    ? "bg-[var(--accent)] text-white"
+                    : "bg-[var(--bg-primary)] border border-[var(--border)] hover:border-[var(--accent)]"
                     }`}
                 >
                   {t.icon} {t.label}
