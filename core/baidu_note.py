@@ -1,9 +1,10 @@
+import os
 import requests
 import time
 import json
 
 # ================= 配置参数 =================
-API_KEY = "REDACTED_BAIDU_API_KEY"  # TODO: 替换为您在千帆平台获取的真实API Key
+API_KEY = os.environ.get("BAIDU_API_KEY", "")  # 从环境变量读取真实API Key
 VIDEO_URL = "https://link.jiyiho.cn/orfile/view.php/3222a4a890216588f9aa21acc036a474.mp4"  # TODO: 替换为支持直接下载的公网视频直链
 # ============================================
 
