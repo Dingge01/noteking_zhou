@@ -48,6 +48,9 @@ mcp/dist/
 # Docker
 docker-compose.override.yml
 
+# cookies
+bilibili_cookies.txt
+
 # Large files
 demos/minimind/videos/
 demos/minimind/latex_build/

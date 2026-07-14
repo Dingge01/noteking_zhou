@@ -34,8 +34,6 @@ def _load_config() -> AppConfig:
         cfg.llm.base_url = os.environ["NOTEKING_LLM_BASE_URL"]
     if os.environ.get("NOTEKING_LLM_MODEL"):
         cfg.llm.model = os.environ["NOTEKING_LLM_MODEL"]
-    if os.environ.get("BILIBILI_SESSDATA"):
-        cfg.bilibili_sessdata = os.environ["BILIBILI_SESSDATA"]
     if os.environ.get("NOTEKING_PROXY"):
         cfg.proxy.enabled = True
         cfg.proxy.http = os.environ["NOTEKING_PROXY"]

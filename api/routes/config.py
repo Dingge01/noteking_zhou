@@ -19,8 +19,7 @@ async def get_config():
         d["llm"]["api_key"] = "***" + d["llm"]["api_key"][-4:]
     if d.get("asr", {}).get("groq_api_key"):
         d["asr"]["groq_api_key"] = "***" + d["asr"]["groq_api_key"][-4:]
-    if d.get("bilibili_sessdata"):
-        d["bilibili_sessdata"] = "***"
+
     return d
 
 
@@ -45,8 +44,5 @@ async def update_config(update: ConfigUpdate):
             config.proxy.http = update.proxy_url
     if update.default_template is not None:
         config.default_template = update.default_template
-    if update.bilibili_sessdata is not None:
-        config.bilibili_sessdata = update.bilibili_sessdata
-
     config.save()
     return {"status": "ok", "message": "Configuration updated"}

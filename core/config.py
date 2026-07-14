@@ -70,7 +70,6 @@ class AppConfig:
     llm: LLMConfig = field(default_factory=LLMConfig)
     cache_dir: str = str(DEFAULT_CACHE_DIR)
     output_dir: str = str(DEFAULT_OUTPUT_DIR)
-    bilibili_sessdata: str = ""
     default_template: str = "detailed"
     max_concurrent_downloads: int = 3
 
@@ -94,7 +93,6 @@ class AppConfig:
                 llm=LLMConfig(**data.get("llm", {})),
                 cache_dir=data.get("cache_dir", str(DEFAULT_CACHE_DIR)),
                 output_dir=data.get("output_dir", str(DEFAULT_OUTPUT_DIR)),
-                bilibili_sessdata=data.get("bilibili_sessdata", ""),
                 default_template=data.get("default_template", "detailed"),
                 max_concurrent_downloads=data.get("max_concurrent_downloads", 3),
             )

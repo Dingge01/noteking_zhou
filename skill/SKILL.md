@@ -43,12 +43,14 @@ The following tools must be available in the environment:
 - `ffmpeg` - Audio/video processing (install: `brew install ffmpeg` or `apt install ffmpeg`)
 
 Python packages (auto-installed):
+
 - `openai` - LLM API client
 - `youtube-transcript-api` - YouTube subtitle extraction
 - `httpx` - HTTP client
 - `pysrt` - SRT subtitle parsing
 
 Optional:
+
 - `faster-whisper` - Local speech recognition (install: `pip install faster-whisper`)
 
 ## Environment Variables
@@ -59,7 +61,7 @@ Optional:
 | `NOTEKING_LLM_BASE_URL` | No | Custom API base URL |
 | `NOTEKING_LLM_MODEL` | No | Model name (default: gpt-4o-mini) |
 | `NOTEKING_PROXY` | No | Proxy URL for YouTube access from China |
-| `BILIBILI_SESSDATA` | No | Bilibili login cookie for HD & member content |
+| `BILIBILI_COOKIES_FILE` | No | Path to Netscape-format Bilibili cookies file |
 
 ## Usage
 

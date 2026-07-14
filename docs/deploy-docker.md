@@ -40,8 +40,9 @@ NOTEKING_LLM_MODEL=deepseek-chat
 # 可选: 代理 (中国用户访问 YouTube 需要)
 NOTEKING_PROXY=socks5://127.0.0.1:7890
 
-# 可选: B站登录 (获取高清和会员内容)
-BILIBILI_SESSDATA=your_sessdata_here
+# 可选: B站 cookie 文件 (获取高清和会员内容)
+# 需要将浏览器导出的 Netscape 格式 cookie 保存为 bilibili_cookies.txt
+BILIBILI_COOKIES_FILE=./bilibili_cookies.txt
 ```
 
 ## GPU 加速版本 (本地语音识别)
@@ -78,7 +79,7 @@ docker compose restart
 ## 常见问题
 
 **Q: Docker 镜像下载太慢？**
-A: 配置 Docker 镜像加速器，参考 https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors
+A: 配置 Docker 镜像加速器，参考 <https://cr.console.aliyun.com/cn-hangzhou/instances/mirrors>
 
 **Q: 如何修改端口？**
 A: 编辑 `docker-compose.yml` 中的 `ports` 映射

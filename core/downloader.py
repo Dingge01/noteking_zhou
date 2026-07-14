@@ -44,7 +44,6 @@ BILIBILI_COOKIES_FILE = Path("/app/bilibili_cookies.txt")
 
 def _base_cmd(config: AppConfig) -> list[str]:
     import os
-    from urllib.parse import unquote
 
     cmd = ["yt-dlp", "--no-warnings"]
 
@@ -53,19 +52,16 @@ def _base_cmd(config: AppConfig) -> list[str]:
     if proxy:
         cmd += ["--proxy", proxy]
 
-    # B站 cookies：文件优先，其次用 SESSDATA 生成临时文件
-    if BILIBILI_COOKIES_FILE.exists():
+    # B站 cookies：固定路径 /app/bilibili_cookies.txt
+    # 使用 is_file() 避免 Docker 把不存在的文件挂载成目录时误用
+    if BILIBILI_COOKIES_FILE.is_file():
         cmd += ["--cookies", str(BILIBILI_COOKIES_FILE)]
-    else:
-        sessdata = config.bilibili_sessdata or os.environ.get("BILIBILI_SESSDATA", "")
-        if sessdata:
-            decoded = unquote(sessdata)
-            tmp = Path(tempfile.mktemp(suffix="_bili_cookies.txt"))
-            tmp.write_text(
-                f"# Netscape HTTP Cookie File\n"
-                f".bilibili.com\tTRUE\t/\tTRUE\t9999999999\tSESSDATA\t{decoded}\n"
-            )
-            cmd += ["--cookies", str(tmp)]
+    elif BILIBILI_COOKIES_FILE.exists():
+        import warnings
+        warnings.warn(
+            f"{BILIBILI_COOKIES_FILE} exists but is not a regular file "
+            f"(likely a directory created by Docker bind mount). Skipping cookies."
+        )
 
     return cmd
 

@@ -25,7 +25,6 @@ class ConfigUpdate(BaseModel):
     proxy_enabled: bool | None = None
     proxy_url: str | None = None
     default_template: str | None = None
-    bilibili_sessdata: str | None = None
 
 
 class VideoResponse(BaseModel):
